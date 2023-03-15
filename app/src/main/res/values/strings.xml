@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">WiFi Channel Score</string>
+    <string name="channel_13">Channel 13+</string>
+    <string name="scannen">Scan</string>
+</resources>
