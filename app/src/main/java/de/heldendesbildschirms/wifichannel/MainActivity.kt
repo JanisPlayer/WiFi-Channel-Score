@@ -317,7 +317,63 @@ class MainActivity : AppCompatActivity() {
                         val networks = scanResults.map {
                             WiFiNetwork(it.SSID, frequencyToChannel(it.frequency), it.level, conventchannelWidthtoMHz(it.channelWidth))
                         }
-                        // Hier können Sie Ihre Logik implementieren, die auf die Scanergebnisse reagiert
+                        if (MywifiSelect == "") {
+                            MywifiSelect = wifiInfo.ssid.toString().trim('"')
+                        }
+
+                        var currentChannel_temp = WiFiNetwork(MywifiSelect, frequencyToChannel(wifiInfo.frequency), wifiInfo.rssi.toInt(), 0)
+                        var currentselectWiFi = check_has_24GHz_or_5GHz(currentChannel_temp,networks)
+
+                        val wifi_info_text_val = findViewById<TextView>(R.id.wifi_info_text)
+                        wifi_info_text_val.setText(currentselectWiFi.ssid.toString() + " " + currentselectWiFi.channel24GHz.toString() + " " +  currentselectWiFi.level24GHz.toString() + " " +  currentselectWiFi.channel5GHz + " " +  currentselectWiFi.level5GHz.toString())
+                        // Do something with the current channel
+
+                        val wifiConfigurations = wifiManager.configuredNetworks
+
+                        Log.d("String", wifiConfigurations.toString())
+
+                        val itemsnetworks = mutableListOf<String>()
+                        itemsnetworks.add("select wifi")
+                        for (result in networks) {
+
+                            Log.d("String", result.toString())
+
+                            itemsnetworks.add(result.toString())
+                        }
+
+                        //val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsnetworks)
+                        //adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+                        //isReloadingList = true
+                        //if (spinner_select_wifi_var.adapter == null) {
+                        //val selectedItemPosition = listView.selectedItemPosition Eher beim Namen
+                        //spinner_select_wifi_var.adapter = adapter
+                        //listView.setSelection(selectedItemPosition)
+                        //}
+                        //spinner_select_wifi_var.setAdapter(adapter)
+                        //adapter.notifyDataSetChanged();
+                        //isReloadingList = false
+
+                        spinner_select_wifi_var.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                                //if (!isReloadingList) {
+                                if (position != 0) {
+                                    Toast.makeText(this@MainActivity, "Selected item: " + networks[position-1].ssid, Toast.LENGTH_SHORT).show()
+                                    MywifiSelect = networks[position-1].ssid.toString()
+                                }
+                                //}
+                            }
+                            override fun onNothingSelected(parent: AdapterView<*>?) {}
+                        }
+
+                        //Log.d("String", networks[0].channel.toString())
+                        //for (result in networks) {
+                        //Log.d("String", result.channel.toString())
+
+                        //val channelFrequency = FloatArray(channels24GHz.size) { 0.0f }
+
+                        //Log.d("String", channelFrequencyInt.toString())
+                        channelFrequency = ananlyse_channel(currentselectWiFi, networks)
                     }
                 }
             }
